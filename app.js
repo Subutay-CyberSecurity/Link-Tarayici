@@ -5,6 +5,10 @@ document.querySelector("#tarama").addEventListener("click", async () => {
 
   console.log(`Tam URL : ${url.href}\nİP : ${ip}\nDomain : ${url.hostname}\nProtocol : ${url.protocol}`);
 
+  if (url.hostname.endsWith("trycloudflare.com")) {
+    
+  }
+
   isHTTPS(url);
 
   checkPhisng(url);
@@ -12,6 +16,8 @@ document.querySelector("#tarama").addEventListener("click", async () => {
   domainDate(url.hostname);
 
   serverAndOrg(ip);
+
+  isTunnel(url.hostname);
 });
 
 // URLyi alma fonksiyonu
@@ -165,5 +171,32 @@ async function serverAndOrg(ip) {
   }
 }
 
+//Tünelleme yapılıp yapılmadığını analiz eder
+function isTunnel(domain) {
+  const tunnelServices = [
+  "trycloudflare.com",
+  "ngrok.io",
+  "ngrok-free.app",
+  "ngrok.app",
+  "ngrok.dev",
+  "localtunnel.me",
+  "loca.lt",
+  "serveo.net",
+  "localhost.run",
+  "tunnelto.dev",
+  "openport.io",
+  "pagekite.me",
+  "packetriot.net",
+  "expose.sh",
+  "replit.app",
+  "repl.co",
+  "glitch.me",
+  "vercel.app",
+  "netlify.app"
+  ];
 
-
+  if (tunnelServices.some(t => domain.endsWith(t))) {
+    document.querySelector("#domainyas").textContent = "Tünelleme yapılıyor YÜKSEK RİSK";
+    document.querySelector("#domainyas").classList = "text-base md:text-lg font-bold text-crimson";
+  }
+};
