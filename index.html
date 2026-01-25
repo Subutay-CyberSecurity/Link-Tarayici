@@ -135,7 +135,7 @@
 <h3 class="font-bold text-sm md:text-lg mb-3 md:mb-4">Virüs Testi</h3>
 <span class="w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-primary text-background-dark text-[10px] md:text-xs font-black uppercase tracking-widest">ANALİZE HAZIR</span>
 </div>
-<div class="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl flex flex-col items-center text-center">
+<div id="ssl" class="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl flex flex-col items-center text-center">
 <div class="size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 border border-primary/20">
 <span class="material-symbols-outlined text-primary text-2xl md:text-3xl">no_encryption</span>
 </div>
@@ -153,7 +153,7 @@
 </div>  
 -->
 
-<div class="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl flex flex-col items-center text-center">
+<div id="blacklist" class="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl flex flex-col items-center text-center">
 <div class="size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 border border-primary/20">
 <span class="material-symbols-outlined text-primary text-2xl md:text-3xl">block</span>
 </div>
@@ -189,11 +189,11 @@
 <div class="p-6 md:p-8 grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
 <div class="space-y-1 md:space-y-2">
 <p class="text-[10px] md:text-xs text-primary font-bold uppercase tracking-widest opacity-60">IP Adresi</p>
-<p class="text-base md:text-lg font-mono text-crimson font-bold">103.22.19.42 [BLACKLISTED]</p>
+<p id="ip"class="text-base md:text-lg font-mono text-white font-bold">#.#.#.#</p>
 </div>
 <div class="space-y-1 md:space-y-2">
 <p class="text-[10px] md:text-xs text-primary font-bold uppercase tracking-widest opacity-60">Alan Adı Yası</p>
-<p class="text-base md:text-lg font-bold text-crimson">3 Hours (Anomalous)</p>
+<p id="domainyas" class="text-base md:text-lg font-bold text-white">...</p>
 </div>
 <div class="space-y-1 md:space-y-2">
 <p class="text-[10px] md:text-xs text-primary font-bold uppercase tracking-widest opacity-60">Sunucu Sağlayıcısı</p>
