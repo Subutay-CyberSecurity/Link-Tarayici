@@ -10,6 +10,8 @@ document.querySelector("#tarama").addEventListener("click", async () => {
   checkPhisng(url);
 
   domainDate(url.hostname);
+
+  serverAndOrg(ip);
 });
 
 // URLyi alma fonksiyonu
@@ -121,6 +123,7 @@ async function checkPhisng(domain) {
   }
 }
 
+// Domainin Satın Alındığı Tarih
 async function domainDate(domain) {
   try {
     let data = await fetch(`https://rdap.verisign.com/com/v1/domain/${domain}`);
@@ -147,28 +150,20 @@ async function domainDate(domain) {
   } 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Sunucunun Konumu Ve Sağlayıcısı
+async function serverAndOrg(ip) {
+  try {
+    let data = await fetch(`https://ipapi.co/${ip}/json/`);
+    data = await data.json();
+    document.querySelector("#saglayıcı").textContent = `${data.org}`
+    document.querySelector("#ulke").textContent = `${data.country_name} ${data.country_code}`
+    if (!data) {
+      throw new Error("Hataa")
+    }
+  } catch (err) {
+    alert(err);
+  }
+}
 
 
 
