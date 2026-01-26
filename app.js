@@ -5,99 +5,71 @@ document.querySelector("#tarama").addEventListener("click", async () => {
 
   console.log(`Tam URL : ${url.href}\nİP : ${ip}\nDomain : ${url.hostname}\nProtocol : ${url.protocol}`);
 
-  if (url.hostname.endsWith("trycloudflare.com")) {
-    
-  }
 
-  isHTTPS(url);
+  const httpsmi = isHTTPS(url);
+  const blacklisttemi = await checkBlackList(url.hostname);
+  const domuinintarihi = await domainDate(url.hostname);
+  const ulkebilgisi = await serverAndOrg(ip);
+  const tunnelmi = isTunnel(url.hostname);
+  const httpheaderi = await httpHeaders(url); 
 
-  checkPhisng(url);
-
-  domainDate(url.hostname);
-
-  serverAndOrg(ip);
-
-  isTunnel(url.hostname);
-
-  httpHeaders(url); 
+  console.log(httpsmi);
+  console.log(blacklisttemi)
+  console.log(domuinintarihi)
+  console.log(ulkebilgisi)
+  console.log(tunnelmi)
+  console.log(httpheaderi)
 });
 
 // URLyi alma fonksiyonu
-
 function getUrl(inputValue) {
   try {
     if (!inputValue) {
       throw new Error("Lütfen girdiyi doldurun");
-    } else if (!isValidURL(inputValue)) {
-      throw new Error("Lütfen geçerli bir Link girin");
     }
-    
     return new URL(inputValue);
-  
   } catch (err) {
       console.log(`Hata : ${err.message}`);
       alert(err.message)
   };
 };
 
-function isValidURL(params) {
-  try{
-    new URL(params);
-    return true
-  } catch {
-    return false 
-  }
-}
-
 // TLS var mı yok mu onu kontrol eden fonksiyon
 function isHTTPS(url) {
-  try {
-    const div =  document.querySelector("#ssl") 
-    if(url.protocol === "https:"){
+    if(url.protocol === "https:") return true;
+    if(url.protocol === "http:") return false;
+    alert("Bu bir web site linki değildir");
+}
+/*
+      const div =  document.querySelector("#ssl") 
       div.style.borderColor="";
       div.children[0].classList = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 border border-primary/20" 
       div.children[0].children[0].classList = "material-symbols-outlined text-primary text-2xl md:text-3xl" 
       div.children[2].classList = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-primary text-black text-[10px] md:text-xs font-black uppercase tracking-widest" 
-      div.children[2].textContent="Güvenli";
-    } else if ( url.protocol === "http:"){
-      div.style.borderColor="#DC143C";
+      div.children[2].textContent="Güvenli"; */
+///////////////////
+/*      div.style.borderColor="#DC143C";
       div.children[0].classList = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-crimson/10 flex items-center justify-center mb-3 md:mb-4 border border-crimson/20"
       div.children[0].children[0].classList = "material-symbols-outlined text-crimson text-2xl md:text-3xl" 
       div.children[2].classList = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-crimson text-white text-[10px] md:text-xs font-black uppercase tracking-widest" 
-      div.children[2].textContent="Güvensiz";
-    } else {
-      throw new Error("Bu bir web site linki değildir.")
-    }
+      div.children[2].textContent="Güvensiz"; */
 
-  } catch (err) {
-    alert(err);
-  }
-}
 
 // IP adresini bulan fonksiyon
 async function getIPFromDomain(domain) {
   try {
-
-    if (isIP(domain)) {
-      console.log(domain);
-      document.querySelector("#ip").textContent = domain;
-      return domain;
-    }
-
+    if (isIP(domain)) return domain;
     let data = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
     data = await data.json();
-
     if (data.Answer && data.Answer.length > 0) {
       const ip = data.Answer?.find(a => a.type === 1)?.data;
       if (!ip) {
         throw new Error("IPv4 (A kaydı) bulunamadı");
       }
-      document.querySelector("#ip").textContent = ip;
       return ip;
     } else {
       throw new Error("Lütfen geçerli bir Link girin");
     }
-
   } catch (err) {
     alert(err);
   }
@@ -111,33 +83,37 @@ function isIP(ip) {
 }
 
 
-// Phising kontrolü
-async function checkPhisng(domain) {
-  let new_data = await fetch(`https://api.phishstats.info/api/phishing?_where=(url,like,${domain})`);
+// BlackList kontrolü
+async function checkBlackList(domain) {
+  let data = await fetch(`https://api.phishstats.info/api/phishing?_where=(url,like,${domain})`);
   data = await new_data.json()
-  const div = document.querySelector("#blacklist");
-  if (data[0]) {
+  if (data[0]) return true;
+  return false;
+}
+/*
+      const div = document.querySelector("#blacklist");
       div.style.borderColor="#DC143C";
       div.children[0].classList = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-crimson/10 flex items-center justify-center mb-3 md:mb-4 border border-crimson/20"
       div.children[0].children[0].classList = "material-symbols-outlined text-crimson text-2xl md:text-3xl" 
       div.children[2].classList = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-crimson text-white text-[10px] md:text-xs font-black uppercase tracking-widest" 
       div.children[2].textContent="Güvensiz";
-  } else {
+       
       div.style.borderColor="";
       div.children[0].classList = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 border border-primary/20" 
       div.children[0].children[0].classList = "material-symbols-outlined text-primary text-2xl md:text-3xl" 
       div.children[2].classList = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-primary text-black text-[10px] md:text-xs font-black uppercase tracking-widest" 
       div.children[2].textContent="Güvenli";
-  }
-}
+ */
 
 // Domainin Satın Alındığı Tarih
 async function domainDate(domain) {
   let data = await fetch(`https://rdap.verisign.com/com/v1/domain/${domain}`);
-  if (!data) {return};
+  if (!data) alert("Domainin satın alındığı tarih bulunamadı");
   data = await data.json()
-  const date =  new Date(data.events.find(e => ["registration", "created"].includes(e.eventAction)).eventDate);
-  const day  = Math.floor((new Date - date) / (1000 * 60 * 60 * 24))
+  const date =  new Date(data.events?.find(e => ["registration", "created"].includes(e.eventAction)).eventDate);
+  return Math.floor((new Date - date) / (1000 * 60 * 60 * 24));
+}
+/*
   const div = document.querySelector("#domainyas")
   div.classList = "text-base md:text-lg font-bold text-white"
   if (day < 7) {
@@ -148,23 +124,25 @@ async function domainDate(domain) {
   } else if (day < 365) {
     div.textContent = `${Math.floor(day / 30)} Ay önce bu domain satın alındı`;
   } else {
-
     div.textContent = `${Math.floor(day / 365)} Yıl önce bu domain satın alındı`;
   } 
-}
+*/
 
 // Sunucunun Konumu Ve Sağlayıcısı
 async function serverAndOrg(ip) {
   try {
     let data = await fetch(`https://ipapi.co/${ip}/json/`);
     data = await data.json();
-    document.querySelector("#saglayıcı").textContent = `${data.org}`
-    document.querySelector("#ulke").textContent = `${data.country_name} ${data.country_code}`
-    if (!data) {
-      throw new Error("Hataa")
-    }
+    if (!data) {throw new Error("Hataa")}
+    return {
+      countryName: data.country_name,
+      countryCode: data.country_code,
+      ISP: data.org
+    };
+//    document.querySelector("#saglayıcı").textContent = `${data.org}`
+//    document.querySelector("#ulke").textContent = `${data.country_name} ${data.country_code}`
   } catch (err) {
-    alert(err);
+    alert(err.message);
   }
 }
 
@@ -192,11 +170,13 @@ function isTunnel(domain) {
   "netlify.app"
   ];
 
-  if (tunnelServices.some(t => domain.endsWith(t))) {
-    document.querySelector("#domainyas").textContent = "Tünelleme yapılıyor YÜKSEK RİSK";
-    document.querySelector("#domainyas").classList = "text-base md:text-lg font-bold text-crimson";
-  }
+  if (tunnelServices.some(t => domain.endsWith(t))) return true
+  return false;
+
 };
+//    document.querySelector("#domainyas").textContent = "Tünelleme yapılıyor YÜKSEK RİSK";
+//    document.querySelector("#domainyas").classList = "text-base md:text-lg font-bold text-crimson";
+
 
 // Header analiz
 async function httpHeaders(url) {
@@ -205,7 +185,7 @@ async function httpHeaders(url) {
       method: "HEAD",
       redirect: "manual"
     });
-    const headerJson = {
+    return {
       status: res.status,
       type: res.type,
       headers: {
@@ -215,16 +195,15 @@ async function httpHeaders(url) {
         server: res.headers.get("server")
       }
     }
-
+  }catch (err){
+    alert(err)
+  };
+};
+/*
     const analysis = {
-      redirectRisl: headerJson.status >= 300 && headerJson.headers < 400,
+      redirectRisk: headerJson.status >= 300 && headerJson.status < 400,
       downloadRisk: headerJson.headers.contentType?.includes("application"),
       hiddenServer: headerJson.headers.server === null,
       corsLimited: headerJson.type !== "basic"
     }
-    console.log(headerJson);
-    console.log(analysis);
-  }catch (err){
-    alert(err.message)
-  };
-};
+*/
