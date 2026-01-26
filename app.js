@@ -18,6 +18,8 @@ document.querySelector("#tarama").addEventListener("click", async () => {
   serverAndOrg(ip);
 
   isTunnel(url.hostname);
+
+  httpHeaders(url); 
 });
 
 // URLyi alma fonksiyonu
@@ -131,28 +133,23 @@ async function checkPhisng(domain) {
 
 // Domainin Satın Alındığı Tarih
 async function domainDate(domain) {
-  try {
-    let data = await fetch(`https://rdap.verisign.com/com/v1/domain/${domain}`);
-    data = await data.json()
-    const date =  new Date(data.events.find(e => ["registration", "created"].includes(e.eventAction)).eventDate);
-    if (!date) {
-      throw new Error("Domainin satın alındığı tarih bulunamadı");
-    }
-    const day  = Math.floor((new Date - date) / (1000 * 60 * 60 * 24))
-    const div = document.querySelector("#domainyas")
-    div.classList = "text-base md:text-lg font-bold text-white"
-    if (day < 7) {
-      div.textContent = `${day} gün önce bu domain satın alındı`;
-      div.classList = "text-base md:text-lg font-bold text-crimson"
-    } else if (day < 30) {
-      div.textContent = `${Math.floor(day / 7)} Hafta önce bu domain satın alındı`;
-    } else if (day < 365) {
-      div.textContent = `${Math.floor(day / 30)} Ay önce bu domain satın alındı`;
-    } else {
-      div.textContent = `${Math.floor(day / 365)} Yıl önce bu domain satın alındı`;
-    } 
-  }catch (err) {
-    alert(err)
+  let data = await fetch(`https://rdap.verisign.com/com/v1/domain/${domain}`);
+  if (!data) {return};
+  data = await data.json()
+  const date =  new Date(data.events.find(e => ["registration", "created"].includes(e.eventAction)).eventDate);
+  const day  = Math.floor((new Date - date) / (1000 * 60 * 60 * 24))
+  const div = document.querySelector("#domainyas")
+  div.classList = "text-base md:text-lg font-bold text-white"
+  if (day < 7) {
+    div.textContent = `${day} gün önce bu domain satın alındı`;
+    div.classList = "text-base md:text-lg font-bold text-crimson"
+  } else if (day < 30) {
+    div.textContent = `${Math.floor(day / 7)} Hafta önce bu domain satın alındı`;
+  } else if (day < 365) {
+    div.textContent = `${Math.floor(day / 30)} Ay önce bu domain satın alındı`;
+  } else {
+
+    div.textContent = `${Math.floor(day / 365)} Yıl önce bu domain satın alındı`;
   } 
 }
 
@@ -199,4 +196,35 @@ function isTunnel(domain) {
     document.querySelector("#domainyas").textContent = "Tünelleme yapılıyor YÜKSEK RİSK";
     document.querySelector("#domainyas").classList = "text-base md:text-lg font-bold text-crimson";
   }
+};
+
+// Header analiz
+async function httpHeaders(url) {
+  try {
+    const res = await fetch(url, {
+      method: "HEAD",
+      redirect: "manual"
+    });
+    const headerJson = {
+      status: res.status,
+      type: res.type,
+      headers: {
+        contentType: res.headers.get("content-type"), 
+        contentLength : res.headers.get("content-length"),
+        location: res.headers.get("location"),
+        server: res.headers.get("server")
+      }
+    }
+
+    const analysis = {
+      redirectRisl: headerJson.status >= 300 && headerJson.headers < 400,
+      downloadRisk: headerJson.headers.contentType?.includes("application"),
+      hiddenServer: headerJson.headers.server === null,
+      corsLimited: headerJson.type !== "basic"
+    }
+    console.log(headerJson);
+    console.log(analysis);
+  }catch (err){
+    alert(err.message)
+  };
 };
