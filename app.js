@@ -13,12 +13,12 @@ document.querySelector("#tarama").addEventListener("click", async () => {
   const tunnelmi = isTunnel(url.hostname);
   const httpheaderi = await httpHeaders(url); 
 
-  console.log(httpsmi);
-  console.log(blacklisttemi)
-  console.log(domuinintarihi)
-  console.log(ulkebilgisi)
-  console.log(tunnelmi)
-  console.log(httpheaderi)
+  console.log("SSL :", httpsmi);
+  console.log("black List :",blacklisttemi)
+  console.log("domain kaç gün önce alındı :",domuinintarihi)
+  console.log("Barındaırma bilgisi :",ulkebilgisi)
+  console.log("tünelleme var mı : ",tunnelmi)
+  console.log("Http baslığı :",httpheaderi)
 });
 
 // URLyi alma fonksiyonu
@@ -86,7 +86,7 @@ function isIP(ip) {
 // BlackList kontrolü
 async function checkBlackList(domain) {
   let data = await fetch(`https://api.phishstats.info/api/phishing?_where=(url,like,${domain})`);
-  data = await new_data.json()
+  data = await data.json()
   if (data[0]) return true;
   return false;
 }
