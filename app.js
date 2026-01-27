@@ -2,15 +2,18 @@ document.querySelector("#tarama").addEventListener("click", async () => {
 
   let url = getUrl(document.querySelector("#input").value.trim());
   let ip = await getIPFromDomain(url.hostname);
+  const domain = url.hostname.replace(/^www\./, "");
 
-  console.log(`Tam URL : ${url.href}\nİP : ${ip}\nDomain : ${url.hostname}\nProtocol : ${url.protocol}`);
+  
+  
+  console.log(`Tam URL : ${url.href}\nİP : ${ip}\nDomain : ${domain}\nProtocol : ${url.protocol}`);
 
 
   const httpsmi = isHTTPS(url);
-  const blacklisttemi = await checkBlackList(url.hostname);
-  const domuinintarihi = await domainDate(url.hostname);
+  const blacklisttemi = await checkBlackList(domain);
+  const domuinintarihi = await domainDate(domain);
   const ulkebilgisi = await serverAndOrg(ip);
-  const tunnelmi = isTunnel(url.hostname);
+  const tunnelmi = isTunnel(domain);
 //  const httpheaderi = await httpHeaders(url); 
 
   console.log("SSL :", httpsmi);
@@ -96,8 +99,7 @@ async function checkBlackList(domain) {
 // Domainin Satın Alındığı Tarih
 async function domainDate(domain) {
   if (isTunnel(domain)) return false
-  let data = await fetch(`https://rdap.verisign.com/com/v1/domain/${domain}`);
-  if (!data) alert("Domainin satın alındığı tarih bulunamadı");
+  let data = await fetch(`https://rdap.org/domain/${domain}`);
   data = await data.json()
   const date =  new Date(data.events?.find(e => ["registration", "created"].includes(e.eventAction)).eventDate);
   return Math.floor((new Date - date) / (1000 * 60 * 60 * 24));
