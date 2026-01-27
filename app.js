@@ -107,6 +107,7 @@ async function checkBlackList(domain) {
 
 // Domainin Satın Alındığı Tarih
 async function domainDate(domain) {
+  if (isTunnel(domain)) return false
   let data = await fetch(`https://rdap.verisign.com/com/v1/domain/${domain}`);
   if (!data) alert("Domainin satın alındığı tarih bulunamadı");
   data = await data.json()
