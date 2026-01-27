@@ -11,14 +11,14 @@ document.querySelector("#tarama").addEventListener("click", async () => {
   const domuinintarihi = await domainDate(url.hostname);
   const ulkebilgisi = await serverAndOrg(ip);
   const tunnelmi = isTunnel(url.hostname);
-  const httpheaderi = await httpHeaders(url); 
+//  const httpheaderi = await httpHeaders(url); 
 
   console.log("SSL :", httpsmi);
   console.log("black List :",blacklisttemi)
   console.log("domain kaç gün önce alındı :",domuinintarihi)
   console.log("Barındaırma bilgisi :",ulkebilgisi)
   console.log("tünelleme var mı : ",tunnelmi)
-  console.log("Http baslığı :",httpheaderi)
+//  console.log("Http baslığı :",httpheaderi)
 });
 
 // URLyi alma fonksiyonu
@@ -57,22 +57,10 @@ function isHTTPS(url) {
 
 // IP adresini bulan fonksiyon
 async function getIPFromDomain(domain) {
-  try {
-    if (isIP(domain)) return domain;
-    let data = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
-    data = await data.json();
-    if (data.Answer && data.Answer.length > 0) {
-      const ip = data.Answer?.find(a => a.type === 1)?.data;
-      if (!ip) {
-        throw new Error("IPv4 (A kaydı) bulunamadı");
-      }
-      return ip;
-    } else {
-      throw new Error("Lütfen geçerli bir Link girin");
-    }
-  } catch (err) {
-    alert(err);
-  }
+  if (isIP(domain)) return domain;
+  let data = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
+  data = await data.json();
+  if (data.Answer && data.Answer.length > 0) return data.Answer?.find(a => a.type === 1)?.data; //Undifended veri gönderiyorsa dns kaynı yoktur yüksek risk
 }
 
 function isIP(ip) {
