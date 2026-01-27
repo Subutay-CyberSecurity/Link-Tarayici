@@ -14,14 +14,14 @@ document.querySelector("#tarama").addEventListener("click", async () => {
   const domuinintarihi = await domainDate(domain);
   const ulkebilgisi = await serverAndOrg(ip);
   const tunnelmi = isTunnel(domain);
-//  const httpheaderi = await httpHeaders(url); 
+  const httpheaderi = await httpHeaders(url); 
 
   console.log("SSL :", httpsmi);
   console.log("black List :",blacklisttemi)
   console.log("domain kaç gün önce alındı :",domuinintarihi)
   console.log("Barındaırma bilgisi :",ulkebilgisi)
   console.log("tünelleme var mı : ",tunnelmi)
-//  console.log("Http baslığı :",httpheaderi)
+  console.log("Http baslığı :",httpheaderi)
 });
 
 // URLyi alma fonksiyonu
@@ -98,12 +98,28 @@ async function checkBlackList(domain) {
 
 // Domainin Satın Alındığı Tarih
 async function domainDate(domain) {
-  if (isTunnel(domain)) return false
-  let data = await fetch(`https://rdap.org/domain/${domain}`);
-  data = await data.json()
-  const date =  new Date(data.events?.find(e => ["registration", "created"].includes(e.eventAction)).eventDate);
-  return Math.floor((new Date - date) / (1000 * 60 * 60 * 24));
+  try {
+    const res = await fetch(`https://rdap.org/domain/${domain}`);
+    if (!res.ok) return null;
+
+    const data = await res.json();
+
+    if (!Array.isArray(data.events)) return null;
+
+    const ev = data.events.find(e =>
+      e.eventAction === "registration" ||
+      e.eventAction === "created"
+    );
+
+    if (!ev?.eventDate) return null;
+
+    const d = new Date(ev.eventDate);
+    return Math.floor((Date.now() - d) / 86400000);
+  } catch {
+    return null;
+  }
 }
+
 /*
   const div = document.querySelector("#domainyas")
   div.classList = "text-base md:text-lg font-bold text-white"
@@ -176,20 +192,21 @@ async function httpHeaders(url) {
       method: "HEAD",
       redirect: "manual"
     });
+
     return {
       status: res.status,
       type: res.type,
       headers: {
-        contentType: res.headers.get("content-type"), 
-        contentLength : res.headers.get("content-length"),
+        contentType: res.headers.get("content-type"),
+        contentLength: res.headers.get("content-length"),
         location: res.headers.get("location"),
         server: res.headers.get("server")
       }
-    }
-  }catch (err){
-    alert(err)
-  };
-};
+    };
+  } catch (err) {
+    return false;
+  }
+}
 /*
     const analysis = {
       redirectRisk: headerJson.status >= 300 && headerJson.status < 400,
