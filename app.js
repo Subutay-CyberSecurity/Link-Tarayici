@@ -21,122 +21,129 @@ document.querySelector("#tarama").addEventListener("click", async () => {
 
 });
 
-// Analiz Fonksiyonu
 function analysisfunc(cryptology, isBlackList, domainD, countryInfo, isTunnel, httpHeader) {
   let totalRisk = 0;
   let malwareRisk = 0;
   let phisingRisk = 0;
 
+  // Sağlayıcı ve Ülke Bilgileri
+  document.querySelector("#saglayıcı").textContent = countryInfo?.ISP || "Bilinmiyor";
+  document.querySelector("#ulke").textContent = countryInfo ? `${countryInfo.countryName} ${countryInfo.countryCode}` : "Bilinmiyor";
 
-  document.querySelector("#saglayıcı").textContent = `${countryInfo.ISP}`
-  document.querySelector("#ulke").textContent = `${countryInfo.countryName} ${countryInfo.countryCode}`
- 
-
+  // --- HTTP Header Analizi ---
   if (!httpHeader) {
-    console.log("sitede cors var");
+    console.log("Sitede CORS var veya header alınamadı");
   } else {
-    totalRisk =- 5;
-    malwareRisk =-5;
-    phisingRisk =- 5;
+    totalRisk -= 5;
+    malwareRisk -= 5;
+    phisingRisk -= 5;
 
+    // Tanımlamaları httpHeader objesinden alalım
+    const h = httpHeader.headers;
+    const contentType = h.contentType?.toLowerCase() || "";
 
     const httpAnalysis = {
-      redirectRisk: headerJson.status >= 300 && headerJson.status < 400,
+      redirectRisk: httpHeader.status >= 300 && httpHeader.status < 400,
       downloadRisk: (
-      contentType.includes("application/octet-stream") || 
-      contentType.includes("application/zip") || 
-      contentType.includes("application/x-msdownload") ||
-      headers.disposition?.includes("attachment")
-    ), 
-      hiddenServer: headerJson.headers.server === null,
-      corsLimited: headerJson.type !== "basic"
+        contentType.includes("application/octet-stream") || 
+        contentType.includes("application/zip") || 
+        contentType.includes("application/x-msdownload") ||
+        h.disposition?.includes("attachment")
+      ),
+      hiddenServer: h.server === null,
+      corsLimited: httpHeader.type !== "basic"
+    };
+
+    // Yönlendirme Kontrolü
+    if (httpAnalysis.redirectRisk) {
+      totalRisk += 40;
+      malwareRisk += 20;
+      phisingRisk += 35;
     }
 
-    if (redirectRisk) {
-      totalRisk =+ 20;
-      malwareRisk =+ 10;
-      phisingRisk =+ 10;
-    } else {totalRisk =-5};
-
+    // İndirme (Malware) Riski Görselleştirme
+    let downloadDiv = document.querySelector("#malware"); 
     if (httpAnalysis.downloadRisk) {
-      totalRisk =+ 10;
-      malwareRisk =+ 60;
-      div.style.borderColor="#DC143C";
-      div.children[0].classList = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-crimson/10 flex items-center justify-center mb-3 md:mb-4 border border-crimson/20"
-      div.children[0].children[0].classList = "material-symbols-outlined text-crimson text-2xl md:text-3xl" 
-      div.children[2].classList = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-crimson text-white text-[10px] md:text-xs font-black uppercase tracking-widest" 
-      div.children[2].textContent="Güvensiz";     
+      totalRisk += 30;
+      malwareRisk += 60;
+      updateUI(downloadDiv, "Güvensiz", true);
     } else {
-      malwareRisk =- 20;
-      div.style.borderColor="";
-      div.children[0].classList = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 border border-primary/20" 
-      div.children[0].children[0].classList = "material-symbols-outlined text-primary text-2xl md:text-3xl" 
-      div.children[2].classList = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-primary text-black text-[10px] md:text-xs font-black uppercase tracking-widest" 
-      div.children[2].textContent="Güvenli"; 
+      malwareRisk -= 20;
+      updateUI(downloadDiv, "Güvenli", false);
     }
   }
 
-  let div = document.querySelector("#domainyas")
-  if(domainD === null){
-    div.textContent = `Domain yası bulunamadı`;
-    div.classList = "text-base md:text-lg font-bold text-crimson"
-  } else if (domainD< 7) {
-    div.textContent = `${domainD} gün önce bu domain satın alındı`;
-    div.classList = "text-base md:text-lg font-bold text-crimson"
-  } else if (domainD < 30) {
-    div.textContent = `${Math.floor(domainD / 7)} Hafta önce bu domain satın alındı`;
-    div.classList = "text-base md:text-lg font-bold text-white"
-  } else if (domainD < 365) {
-    div.textContent = `${Math.floor(domainD / 30)} Ay önce bu domain satın alındı`;
-    div.classList = "text-base md:text-lg font-bold text-white"
+  // --- Domain Yaşı Analizi ---
+  let ageDiv = document.querySelector("#domainyas");
+  if (domainD === null) {
+    ageDiv.textContent = `Domain yaşı bulunamadı`;
+    ageDiv.className = "text-base md:text-lg font-bold text-crimson";
+    totalRisk += 10;
   } else {
-    div.textContent = `${Math.floor(domainD / 365)} Yıl önce bu domain satın alındı`;
-    div.classList = "text-base md:text-lg font-bold text-white"
-  } 
+    if (domainD < 7) {
+      ageDiv.textContent = `${domainD} gün önce satın alındı (YENİ!)`;
+      ageDiv.className = "text-base md:text-lg font-bold text-crimson";
+      phisingRisk += 40; 
+      totalRisk += 40;
+      malwareRisk += 30;
+    } else if (domainD < 30) {
+      ageDiv.textContent = `${Math.floor(domainD / 7)} Hafta önce satın alındı`;
+      ageDiv.className = "text-base md:text-lg font-bold text-white";
+      phisingRisk += 10;
+    } else {
+      ageDiv.textContent = domainD > 365 ? `${Math.floor(domainD / 365)} Yıl önce satın alındı` : `${Math.floor(domainD / 30)} Ay önce satın alındı`;
+      ageDiv.className = "text-base md:text-lg font-bold text-white";
+    }
+  }
 
+  // --- Tünelleme Kontrolü ---
   if (isTunnel) {
-    totalRisk =+ 50;
-    malwareRisk =+ 50;
-    phisingRisk =+ 50;
-    document.querySelector("#domainyas").textContent = "Tünelleme yapılıyor YÜKSEK RİSK";
-    document.querySelector("#domainyas").classList = "text-base md:text-lg font-bold text-crimson";
+    totalRisk += 50;
+    phisingRisk += 50;
+    ageDiv.textContent = "Tünelleme yapılıyor: YÜKSEK RİSK";
+    ageDiv.className = "text-base md:text-lg font-bold text-crimson";
   }
 
-  div =  document.querySelector("#ssl") 
+  // --- SSL/HTTPS Kontrolü ---
+  let sslDiv = document.querySelector("#ssl");
   if (cryptology) {
-    div.style.borderColor="";
-    div.children[0].classList = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 border border-primary/20" 
-    div.children[0].children[0].classList = "material-symbols-outlined text-primary text-2xl md:text-3xl" 
-    div.children[2].classList = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-primary text-black text-[10px] md:text-xs font-black uppercase tracking-widest" 
-    div.children[2].textContent="Güvenli"; 
+    updateUI(sslDiv, "Güvenli", false);
   } else {
-    totalRisk =+ 20;
-    malwareRisk =+ 20;
-    phisingRisk =+ 20
-    div.style.borderColor="#DC143C";
-    div.children[0].classList = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-crimson/10 flex items-center justify-center mb-3 md:mb-4 border border-crimson/20"
-    div.children[0].children[0].classList = "material-symbols-outlined text-crimson text-2xl md:text-3xl" 
-    div.children[2].classList = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-crimson text-white text-[10px] md:text-xs font-black uppercase tracking-widest" 
-    div.children[2].textContent="Güvensiz";
+    totalRisk += 30;
+    malwareRisk += 30;
+    phisingRisk += 30;
+    updateUI(sslDiv, "Güvensiz", true);
   }
 
-  div = document.querySelector("#blacklist");
+  // --- Blacklist Kontrolü ---
+  let blackDiv = document.querySelector("#blacklist");
   if (isBlackList) {
     totalRisk = 100;
     phisingRisk = 100;
-    div.style.borderColor="#DC143C";
-    div.children[0].classList = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-crimson/10 flex items-center justify-center mb-3 md:mb-4 border border-crimson/20"
-    div.children[0].children[0].classList = "material-symbols-outlined text-crimson text-2xl md:text-3xl" 
-    div.children[2].classList = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-crimson text-white text-[10px] md:text-xs font-black uppercase tracking-widest" 
-    div.children[2].textContent="Güvensiz";
+    updateUI(blackDiv, "Güvensiz", true);
   } else {
-    div.style.borderColor="";
-    div.children[0].classList = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 border border-primary/20" 
-    div.children[0].children[0].classList = "material-symbols-outlined text-primary text-2xl md:text-3xl" 
-    div.children[2].classList = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-primary text-black text-[10px] md:text-xs font-black uppercase tracking-widest" 
-    div.children[2].textContent="Güvenli";
+    updateUI(blackDiv, "Güvenli", false);
   }
 
+  console.log(`Analiz Tamamlandı: Toplam Risk: ${totalRisk}, Phishing: ${phisingRisk}, Malware: ${malwareRisk}`);
+}
+
+// Yardımcı UI Fonksiyonu
+function updateUI(element, text, isRisk) {
+  if (!element) return;
+  if (isRisk) {
+    element.style.borderColor = "#DC143C";
+    element.children[0].className = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-crimson/10 flex items-center justify-center mb-3 md:mb-4 border border-crimson/20";
+    element.children[0].children[0].className = "material-symbols-outlined text-crimson text-2xl md:text-3xl";
+    element.children[2].className = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-crimson text-white text-[10px] md:text-xs font-black uppercase tracking-widest";
+    element.children[2].textContent = text;
+  } else {
+    element.style.borderColor = "";
+    element.children[0].className = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 border border-primary/20";
+    element.children[0].children[0].className = "material-symbols-outlined text-primary text-2xl md:text-3xl";
+    element.children[2].className = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-primary text-black text-[10px] md:text-xs font-black uppercase tracking-widest";
+    element.children[2].textContent = text;
+  }
 }
 
 // URLyi alma fonksiyonu
@@ -176,8 +183,8 @@ function isIP(ip) {
 
 
 // BlackList kontrolü
-async function checkBlackList(url) {
-  let data = await fetch(`https://api.phishstats.info/api/phishing?_where=(url,like,${url})`);
+async function checkBlackList(domain) {
+  let data = await fetch(`https://api.phishstats.info/api/phishing?_where=(url,like,${domain})`);
   data = await data.json()
   if (data[0]) return true;
   return false;
@@ -268,7 +275,7 @@ async function httpHeaders(url) {
         contentType: res.headers.get("content-type"),
         contentLength: res.headers.get("content-length"),
         location: res.headers.get("location"),
-        server: res.headers.get("server"),
+        server: res.headers.get("server")
         disposition: res.headers.get("content-disposition"),
         security: res.headers.get("strict-transport-security"),
         poweredBy: res.headers.get("x-powered-by"),
