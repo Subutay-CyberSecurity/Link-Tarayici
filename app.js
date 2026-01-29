@@ -97,8 +97,8 @@ function analysisfunc(cryptology, isBlackList, domainD, countryInfo, isTunnel, h
 
   // --- Tünelleme Kontrolü ---
   if (isTunnel) {
-    totalRisk += 50;
-    phisingRisk += 50;
+    totalRisk += 60;
+    phisingRisk += 90;
     ageDiv.textContent = "Tünelleme yapılıyor: YÜKSEK RİSK";
     ageDiv.className = "text-base md:text-lg font-bold text-crimson";
   }
@@ -145,6 +145,21 @@ function analysisfunc(cryptology, isBlackList, domainD, countryInfo, isTunnel, h
   totalRisk = Math.min(100, Math.max(0, totalRisk));
   phisingRisk = Math.min(100, Math.max(0, phisingRisk));
   malwareRisk = Math.min(100, Math.max(0, malwareRisk));
+
+  document.querySelector("#riskText").textContent = totalRisk;
+  if (totalRisk >= 85) {
+    document.querySelector("#riskCircle").classList = "text-crimson"
+    document.querySelector("#text1").classList = "text-xs md:text-sm uppercase font-bold tracking-[0.2em] text-crimson mt-2"
+    document.querySelector("#text2").classList = "text-3xl md:text-5xl font-display font-black text-crimson tracking-tighter mb-2"
+  } else if (totalRisk > 0){
+    document.querySelector("#riskCircle").classList = "text-warning"
+    document.querySelector("#text1").classList = "text-xs md:text-sm uppercase font-bold tracking-[0.2em] text-warning mt-2"
+    document.querySelector("#text2").classList = "text-3xl md:text-5xl font-display font-black text-warning tracking-tighter mb-2"
+  } else {
+    document.querySelector("#riskCircle").classList = "text-primary"
+    document.querySelector("#text1").classList = "text-xs md:text-sm uppercase font-bold tracking-[0.2em] text-primary mt-2"
+    document.querySelector("#text2").classList = "text-3xl md:text-5xl font-display font-black text-primary tracking-tighter mb-2"
+  }
 
   console.log(`Analiz Tamamlandı: Toplam Risk: ${totalRisk}, Phishing: ${phisingRisk}, Malware: ${malwareRisk}`);
 }
