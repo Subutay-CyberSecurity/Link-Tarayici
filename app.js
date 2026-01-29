@@ -61,15 +61,14 @@ function analysisfunc(cryptology, isBlackList, domainD, countryInfo, isTunnel, h
       phisingRisk += 35;
     }
 
-    // İndirme (Malware) Riski Görselleştirme
-    let downloadDiv = document.querySelector("#malware"); 
+    // İndirme (Malware) Analizi 
     if (httpAnalysis.downloadRisk) {
       totalRisk += 30;
       malwareRisk += 60;
-      updateUI(downloadDiv, "Güvensiz", true);
+      updateUI("malware", 3);
     } else {
       malwareRisk -= 20;
-      updateUI(downloadDiv, "Güvenli", false);
+      updateUI("malware", 1);
     }
   }
 
@@ -105,45 +104,84 @@ function analysisfunc(cryptology, isBlackList, domainD, countryInfo, isTunnel, h
   }
 
   // --- SSL/HTTPS Kontrolü ---
-  let sslDiv = document.querySelector("#ssl");
   if (cryptology) {
-    updateUI(sslDiv, "Güvenli", false);
+    updateUI("ssl", 3);
   } else {
     totalRisk += 30;
     malwareRisk += 30;
     phisingRisk += 30;
-    updateUI(sslDiv, "Güvensiz", true);
+    updateUI("ssl", 1);
   }
 
   // --- Blacklist Kontrolü ---
-  let blackDiv = document.querySelector("#blacklist");
   if (isBlackList) {
     totalRisk = 100;
     phisingRisk = 100;
-    updateUI(blackDiv, "Güvensiz", true);
+    updateUI("blacklist", 1);
   } else {
-    updateUI(blackDiv, "Güvenli", false);
+    updateUI("blacklist", 3);
   }
+  if (malwareRisk >= 85) {
+    totalRisk += 15;
+    updateUI("malware" , 1)
+  } else if (malwareRisk > 0) {
+    totalRisk += 5;
+    updateUI("malware", 2)
+  } else {
+    updateUI("malware", 3)
+  }
+
+
+  if (phisingRisk >= 85) {
+    totalRisk += 15;
+    updateUI("phishing" , 1)
+  } else if (phisingRisk > 0) {
+    totalRisk += 5;
+    updateUI("phishing", 2)
+  } else {
+    updateUI("phishing", 3)
+  }
+
+  totalRisk = Math.min(100, Math.max(0, totalRisk));
+  phisingRisk = Math.min(100, Math.max(0, phisingRisk));
+  malwareRisk = Math.min(100, Math.max(0, malwareRisk));
 
   console.log(`Analiz Tamamlandı: Toplam Risk: ${totalRisk}, Phishing: ${phisingRisk}, Malware: ${malwareRisk}`);
 }
 
 // Yardımcı UI Fonksiyonu
-function updateUI(element, text, isRisk) {
-  if (!element) return;
-  if (isRisk) {
-    element.style.borderColor = "#DC143C";
-    element.children[0].className = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-crimson/10 flex items-center justify-center mb-3 md:mb-4 border border-crimson/20";
-    element.children[0].children[0].className = "material-symbols-outlined text-crimson text-2xl md:text-3xl";
-    element.children[2].className = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-crimson text-white text-[10px] md:text-xs font-black uppercase tracking-widest";
-    element.children[2].textContent = text;
-  } else {
-    element.style.borderColor = "";
-    element.children[0].className = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 border border-primary/20";
-    element.children[0].children[0].className = "material-symbols-outlined text-primary text-2xl md:text-3xl";
-    element.children[2].className = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-primary text-black text-[10px] md:text-xs font-black uppercase tracking-widest";
-    element.children[2].textContent = text;
-  }
+function updateUI(id, riskLevel) {
+    const element = document.querySelector(`#${id}`);
+    if (!element) return;
+
+    // riskLevel 0: GÜVENLİ (Turkuaz)
+    // riskLevel 1: ŞÜPHELİ (Turuncu)
+    // riskLevel 2: GÜVENSİZ (Kırmızı)
+
+    if (riskLevel === 1) {
+        // TEHLİKELİ / GÜVENSİZ
+        element.style.borderColor = "#dc2626";
+        element.children[0].className = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-crimson/10 flex items-center justify-center mb-3 md:mb-4 border border-crimson/20";
+        element.children[0].children[0].className = "material-symbols-outlined text-crimson text-2xl md:text-3xl";
+        element.children[2].className = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-crimson text-white text-[10px] md:text-xs font-black uppercase tracking-widest";
+        element.children[2].textContent = "GÜVENSİZ";
+
+    } else if (riskLevel === 2) {
+        // ŞÜPHELİ 
+        element.style.borderColor = "#f59e0b";
+        element.children[0].className = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-warning/10 flex items-center justify-center mb-3 md:mb-4 border border-warning/20";
+        element.children[0].children[0].className = "material-symbols-outlined text-warning text-2xl md:text-3xl";
+        element.children[2].className = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-warning text-black text-[10px] md:text-xs font-black uppercase tracking-widest";
+        element.children[2].textContent = "ŞÜPHELİ";
+
+    } else if (riskLevel === 3){
+        // GÜVENLİ
+        element.style.borderColor = "";
+        element.children[0].className = "size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 border border-primary/20";
+        element.children[0].children[0].className = "material-symbols-outlined text-primary text-2xl md:text-3xl";
+        element.children[2].className = "w-full md:w-auto px-2 md:px-4 py-1.5 rounded-full bg-primary text-black text-[10px] md:text-xs font-black uppercase tracking-widest";
+        element.children[2].textContent = "GÜVENLİ";
+    }
 }
 
 // URLyi alma fonksiyonu
@@ -171,7 +209,7 @@ async function getIPFromDomain(domain) {
   if (isIP(domain)) return domain;
   let data = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
   data = await data.json();
-  if (data.Answer && data.Answer.length > 0) return data.Answer?.find(a => a.type === 1)?.data; //Undifended veri gönderiyorsa dns kaynı yoktur yüksek risk
+  if (data.Answer && data.Answer.length > 0) return data.Answer?.find(a => a.type === 1)?.data;
 }
 
 function isIP(ip) {
@@ -275,7 +313,7 @@ async function httpHeaders(url) {
         contentType: res.headers.get("content-type"),
         contentLength: res.headers.get("content-length"),
         location: res.headers.get("location"),
-        server: res.headers.get("server")
+        server: res.headers.get("server"),
         disposition: res.headers.get("content-disposition"),
         security: res.headers.get("strict-transport-security"),
         poweredBy: res.headers.get("x-powered-by"),

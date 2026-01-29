@@ -16,6 +16,7 @@
                         "primary-dark": "#0d9488",
                         "danger": "#ef4444",
                         "crimson": "#dc2626",
+                        "warning": "#f59e0b", // Amber/Turuncu ekledik
                         "background-dark": "#0a0a0a", // Deep charcoal
                         "card-bg": "rgba(23, 23, 23, 0.7)",
                     },
@@ -108,20 +109,20 @@
 <div class="relative size-64 md:size-80 flex items-center justify-center gauge-container">
 <svg class="size-full transform -rotate-90">
 <circle class="text-slate-800" cx="50%" cy="50%" fill="transparent" r="44%" stroke="currentColor" stroke-linecap="round" stroke-width="24"></circle>
-<circle class="text-crimson" cx="50%" cy="50%" fill="transparent" r="44%" stroke="currentColor" stroke-dasharray="880" stroke-dashoffset="132" stroke-linecap="round" stroke-width="24"></circle>
+<circle class="text-crimson" cx="50%" cy="50%" fill="transparent" r="44%" stroke="currentColor" stroke-dasharray="880" stroke-dashoffset="0" stroke-linecap="round" stroke-width="24"></circle>
 </svg>
 <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-<span class="text-5xl md:text-6xl font-display font-black text-white leading-none">85<span class="text-2xl md:text-3xl">%</span></span>
+<span class="text-5xl md:text-6xl font-display font-black text-white leading-none">0<span class="text-2xl md:text-3xl">%</span></span>
 <span class="text-xs md:text-sm uppercase font-bold tracking-[0.2em] text-crimson mt-2">Risk Level</span>
 </div>
 </div>
 <div class="mt-6 md:mt-8 text-center px-4">
-<h2 class="text-3xl md:text-5xl font-display font-black text-crimson tracking-tighter mb-2">THREAT DETECTED</h2>
-<p class="text-sm md:text-base text-slate-400 font-medium max-w-md mx-auto">High-confidence malicious indicators found in the behavioral payload analysis.</p>
+<h2 class="text-3xl md:text-5xl font-display font-black text-crimson tracking-tighter mb-2">RİSKİ ANALİZ ET</h2>
+<p class="text-sm md:text-base text-slate-400 font-medium max-w-md mx-auto">Analiz etmek istediğiniz linki tam haliyle yukarıdaki bölüme girin(Henüz demo asamasındayız sonuçlar 100% doğru değildir).</p>
 </div>
 </div>
-<div id="phishing" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-12 md:mb-16">
-<div class="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl flex flex-col items-center text-center">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-12 md:mb-16">
+<div id="phishing" class="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl flex flex-col items-center text-center">
 <div class="size-10 md:size-14 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 border border-primary/20">
 <span class="material-symbols-outlined text-primary text-2xl md:text-3xl">phishing</span>
 </div>
