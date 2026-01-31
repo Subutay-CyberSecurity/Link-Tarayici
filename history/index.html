@@ -1,0 +1,210 @@
+<html class="dark" lang="en"><head></head><body class="min-h-screen">
+
+
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Scan History Management Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=Poppins:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2dd4bf", // Turquoise
+                        "primary-dark": "#0d9488",
+                        "danger": "#ef4444",
+                        "crimson": "#dc2626",
+                        "background-dark": "#0a0a0a", // Deep charcoal
+                        "card-bg": "rgba(23, 23, 23, 0.7)",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"],
+                        "display": ["Poppins", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-background-dark text-slate-100 font-sans antialiased overflow-x-hidden;
+            }
+        }
+        .glass-card {
+            @apply backdrop-blur-xl border border-white/5 bg-card-bg;
+        }
+        .turquoise-glow {
+            box-shadow: 0 0 25px rgba(45, 212, 191, 0.15);
+        }
+        .gauge-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gauge-svg {
+            transform: rotate(-90deg);
+        }
+    </style>
+
+
+<header class="border-b border-primary/10 bg-background-dark/90 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
+<div class="flex items-center gap-2 md:gap-3">
+<div class="bg-primary p-1.5 md:p-2 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-background-dark text-xl md:2xl font-bold">shield_with_heart</span>
+</div>
+<h1 class="text-lg md:text-xl font-display font-extrabold tracking-tight">TARAMA <span class="text-primary hidden sm:inline">GEÇMİSİ</span><span class="text-primary sm:hidden">LOGS</span></h1>
+</div>
+<div class="flex items-center gap-3 md:gap-4">
+<a class="flex items-center gap-2 px-3 md:px-5 py-2 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs md:text-sm font-bold uppercase tracking-tighter hover:bg-primary/20 transition-all" href="/">
+<span class="material-symbols-outlined text-lg"> arrow_back</span>
+<span class="hidden sm:inline">Analiz Ekranına Dön</span>
+</a>
+<button class="flex items-center gap-2 px-3 md:px-5 py-2 rounded-xl bg-crimson/10 border border-crimson/20 text-crimson text-xs md:text-sm font-bold uppercase tracking-tighter hover:bg-crimson/20 transition-all">
+<span class="material-symbols-outlined text-lg">delete_sweep</span>
+<span class="hidden sm:inline">Clear All</span>
+</button>
+<div class="md:hidden flex items-center ml-2 border-l border-white/10 pl-4">
+<input class="hidden" id="mobile-menu-toggle" type="checkbox"/>
+<label class="cursor-pointer text-primary" for="mobile-menu-toggle">
+<span class="material-symbols-outlined text-3xl">menu</span>
+</label>
+<div class="hidden fixed inset-0 top-16 bg-background-dark/95 backdrop-blur-xl z-40 flex-col p-6 gap-6 border-t border-primary/10" id="mobile-menu">
+<a class="text-lg font-bold text-crimson flex items-center gap-3" href="#"><span class="size-2 bg-crimson rounded-full animate-pulse"></span> SOC ALERTS</a>
+<a class="text-lg font-semibold text-slate-300" href="#">ANALYZER</a>
+<a class="text-lg font-semibold text-primary" href="#">HISTORY</a>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
+<div class="mb-8 md:mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-3xl md:text-4xl font-display font-black tracking-tight text-white mb-2">ANALİZ GEÇMİSİ</h2>
+<p class="text-slate-400 font-medium">Daha önce taranan bağlantılar.</p>
+</div>
+<div class="flex gap-4">
+<div style="display: flex;flex-direction: column;align-items: center;"  class="bg-primary/5 border border-primary/10 px-4 py-2 rounded-xl">
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest">Toplam Arama</p>
+<p class="text-xl font-display font-bold">128</p>
+</div>
+<div  style="display: flex;flex-direction: column;align-items: center;" class="bg-crimson/5 border border-crimson/10 px-4 py-2 rounded-xl">
+<p class="text-[10px] font-bold text-crimson uppercase tracking-widest">Threats Identified</p>
+<p class="text-xl font-display font-bold">42</p>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl flex items-center gap-4 md:gap-8 group hover:border-crimson/40 transition-all duration-300 relative overflow-hidden">
+<div class="absolute left-0 top-0 w-1 h-full bg-crimson opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="gauge-container shrink-0">
+<svg class="gauge-svg w-12 h-12 md:w-16 md:h-16" viewBox="0 0 36 36">
+<path class="text-white/10 stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<path class="text-crimson stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="85, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-[10px] md:text-xs font-black text-white">85%</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Yesterday, 14:45 PM</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-crimson/20 text-crimson font-black uppercase tracking-tighter">CRITICAL</span>
+</div>
+<a class="text-primary font-bold text-base md:text-xl hover:text-white transition-colors truncate block" href="#">https://secure-gate-v3.io/check/suspicious-payload-882</a>
+</div>
+<div class="flex items-center gap-4 md:gap-6">
+<div class="hidden md:block text-right">
+<span class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</span>
+<span class="text-crimson text-xs font-black uppercase">Malicious</span>
+</div>
+<button class="size-10 md:size-12 rounded-xl border border-white/5 hover:border-crimson/40 hover:bg-crimson/10 text-slate-500 hover:text-crimson transition-all flex items-center justify-center group/btn">
+<span class="material-symbols-outlined text-xl transition-transform group-hover/btn:rotate-90">close</span>
+</button>
+</div>
+</div>
+<div class="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl flex items-center gap-4 md:gap-8 group hover:border-primary/40 transition-all duration-300 relative overflow-hidden">
+<div class="absolute left-0 top-0 w-1 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="gauge-container shrink-0">
+<svg class="gauge-svg w-12 h-12 md:w-16 md:h-16" viewBox="0 0 36 36">
+<path class="text-white/10 stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<path class="text-primary stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="10, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-[10px] md:text-xs font-black text-white">10%</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Oct 24, 2023, 09:12 AM</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-black uppercase tracking-tighter">SECURE</span>
+</div>
+<a class="text-primary font-bold text-base md:text-xl hover:text-white transition-colors truncate block" href="#">https://docs.cloud-portal.network/integration/v1</a>
+</div>
+<div class="flex items-center gap-4 md:gap-6">
+<div class="hidden md:block text-right">
+<span class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</span>
+<span class="text-primary text-xs font-black uppercase">Verified</span>
+</div>
+<button class="size-10 md:size-12 rounded-xl border border-white/5 hover:border-crimson/40 hover:bg-crimson/10 text-slate-500 hover:text-crimson transition-all flex items-center justify-center group/btn">
+<span class="material-symbols-outlined text-xl transition-transform group-hover/btn:rotate-90">close</span>
+</button>
+</div>
+</div>
+<div class="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl flex items-center gap-4 md:gap-8 group hover:border-orange-500/40 transition-all duration-300 relative overflow-hidden">
+<div class="absolute left-0 top-0 w-1 h-full bg-orange-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="gauge-container shrink-0">
+<svg class="gauge-svg w-12 h-12 md:w-16 md:h-16" viewBox="0 0 36 36">
+<path class="text-white/10 stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<path class="text-orange-500 stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="52, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-[10px] md:text-xs font-black text-white">52%</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Oct 22, 2023, 11:30 AM</span>
+<span class="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-black uppercase tracking-tighter">TRUSTED</span>
+</div>
+<a class="text-primary font-bold text-base md:text-xl hover:text-white transition-colors truncate block" href="#">https://github.com/security-repo/scanner-tools</a>
+</div>
+<div class="flex items-center gap-4 md:gap-6">
+<div class="hidden md:block text-right">
+<span class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</span>
+<span class="text-primary text-xs font-black uppercase">Safe</span>
+</div>
+<button class="size-10 md:size-12 rounded-xl border border-white/5 hover:border-crimson/40 hover:bg-crimson/10 text-slate-500 hover:text-crimson transition-all flex items-center justify-center group/btn">
+<span class="material-symbols-outlined text-xl transition-transform group-hover/btn:rotate-90">close</span>
+</button>
+</div>
+</div>
+</div>
+<div class="mt-10 text-center">
+</div>
+</main>
+<footer class="mt-16 md:mt-20 py-8 md:py-12 border-t border-primary/10 bg-background-dark/90 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary/20 p-2 rounded-lg border border-primary/30">
+<span class="material-symbols-outlined text-primary text-xl font-bold">shield_with_heart</span>
+</div>
+<p class="text-xs md:text-sm font-bold text-primary tracking-widest">SOC UNIFIED ANALYZER v4.2</p>
+</div>
+<div class="flex flex-wrap justify-center gap-4 md:gap-8 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
+<a class="hover:text-primary transition-colors" href="#">Security Logs</a>
+<a class="hover:text-primary transition-colors" href="#">Threat Intel</a>
+<a class="hover:text-primary transition-colors" href="#">API Endpoint</a>
+<a class="hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+
+</body></html>

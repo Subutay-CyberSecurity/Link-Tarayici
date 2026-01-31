@@ -147,15 +147,18 @@ function analysisfunc(cryptology, isBlackList, domainD, countryInfo, isTunnel, h
   malwareRisk = Math.min(100, Math.max(0, malwareRisk));
 
   document.querySelector("#riskText").textContent = totalRisk;
-  if (totalRisk >= 85) {
+  if (totalRisk >= 70) {
+    document.querySelector("#text2").textContent = "İLERİ DÜZEY RİSK"
     document.querySelector("#riskCircle").classList = "text-crimson"
     document.querySelector("#text1").classList = "text-xs md:text-sm uppercase font-bold tracking-[0.2em] text-crimson mt-2"
     document.querySelector("#text2").classList = "text-3xl md:text-5xl font-display font-black text-crimson tracking-tighter mb-2"
-  } else if (totalRisk > 0){
+  } else if (totalRisk >= 45){
+    document.querySelector("#text2").textContent = "SÜPHELİ"
     document.querySelector("#riskCircle").classList = "text-warning"
     document.querySelector("#text1").classList = "text-xs md:text-sm uppercase font-bold tracking-[0.2em] text-warning mt-2"
     document.querySelector("#text2").classList = "text-3xl md:text-5xl font-display font-black text-warning tracking-tighter mb-2"
   } else {
+    document.querySelector("#text2").textContent = "GÜVENLİ"
     document.querySelector("#riskCircle").classList = "text-primary"
     document.querySelector("#text1").classList = "text-xs md:text-sm uppercase font-bold tracking-[0.2em] text-primary mt-2"
     document.querySelector("#text2").classList = "text-3xl md:text-5xl font-display font-black text-primary tracking-tighter mb-2"
