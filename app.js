@@ -16,9 +16,9 @@ document.querySelector("#tarama").addEventListener("click", async () => {
   const countryInfo = await serverAndOrg(ip);
   const isTunnel = checkTunnel(domain);
   const httpHeader = await httpHeaders(url); 
+  const totalRisk = analysisfunc(cryptology, isBlackList, domainD, countryInfo, isTunnel, httpHeader);
 
-  analysisfunc(cryptology, isBlackList, domainD, countryInfo, isTunnel, httpHeader);
-
+  addLS(url, totalRisk);
 });
 
 function analysisfunc(cryptology, isBlackList, domainD, countryInfo, isTunnel, httpHeader) {
@@ -165,6 +165,8 @@ function analysisfunc(cryptology, isBlackList, domainD, countryInfo, isTunnel, h
   }
 
   console.log(`Analiz Tamamlandı: Toplam Risk: ${totalRisk}, Phishing: ${phisingRisk}, Malware: ${malwareRisk}`);
+
+  return totalRisk;
 }
 
 // Yardımcı UI Fonksiyonu
@@ -343,3 +345,13 @@ async function httpHeaders(url) {
   }
 }
 
+function addLS(url, totalRisk){
+  let scanInfo = {
+    "time" : new Date().toLocaleString("tr-TR"),
+    "url" : url.href,
+    "risk" : totalRisk
+  }
+  const history = JSON.parse(localStorage.getItem("history") || "[]" );
+  history.push(scanInfo);
+  localStorage.setItem("history", JSON.stringify(history));
+}
