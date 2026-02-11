@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Core Security Engine Infrastructure</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Icons -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind Config -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#2dd4bf",
+            "primary-dark": "#0d9488",
+            danger: "#ef4444",
+            crimson: "#dc2626",
+            "background-dark": "#0a0a0a",
+            "card-bg": "rgba(23, 23, 23, 0.7)",
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            display: ["Poppins", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Custom Styles -->
+  <style type="text/tailwindcss">
+    @layer base {
+      body {
+        @apply bg-background-dark text-slate-100 font-sans antialiased overflow-x-hidden;
+      }
+    }
+
+    .glass-card {
+      @apply backdrop-blur-xl border border-white/5 bg-card-bg;
+    }
+
+    .turquoise-glow-sm {
+      box-shadow: 0 0 25px rgba(45, 212, 191, 0.1);
+    }
+
+    .turquoise-glow-icon {
+      filter: drop-shadow(0 0 12px rgba(45, 212, 191, 0.4));
+    }
+
+    .crimson-glow-text {
+      text-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0a0a0a;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      @apply bg-white/10 rounded-full;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="border-b border-primary/10 bg-background-dark/90 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-18 flex items-center justify-between">
+
+      <div class="flex items-center gap-3">
+        <div class="bg-primary p-2 rounded-lg flex items-center justify-center">
+          <span class="material-symbols-outlined text-background-dark text-2xl font-bold">
+            shield_with_heart
+          </span>
+        </div>
+
+        <h1 class="text-xl font-display font-extrabold tracking-tight">
+          ULGEN
+          <span class="text-primary hidden sm:inline">CYBER SECURITY</span>
+          <span class="text-primary sm:hidden">SE</span>
+        </h1>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="/" class="text-sm font-semibold hover:text-primary transition-colors">
+          ANALİZ
+        </a>
+        <a href="/history" class="text-sm font-semibold hover:text-primary transition-colors">
+          GEÇMİŞ
+        </a>
+        <a href="#" class="text-sm font-bold text-crimson flex items-center gap-1">
+          <span class="size-2 bg-crimson rounded-full animate-pulse"></span>
+          API BİLGİLERİ
+        </a>
+        <button class="bg-primary/10 p-2 rounded-full border border-primary/20 hover:bg-primary/20 transition">
+          <span class="material-symbols-outlined text-xl text-primary">account_tree</span>
+        </button>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="max-w-5xl mx-auto px-4 md:px-6 py-12 flex-1">
+
+    <h2 class="text-4xl font-display font-black mb-12">
+      API Bilgileri
+    </h2>
+
+    <div class="space-y-12">
+
+      <!-- CARD 1 -->
+      <div class="glass-card rounded-[2rem] p-10 relative">
+        <span class="absolute top-6 right-6 text-[10px] px-3 py-1 border border-white/10 rounded-full text-slate-400">
+          Technical Specs: TI-v4.1
+        </span>
+
+        <div class="flex gap-10">
+          <div class="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center turquoise-glow-icon">
+            <span class="material-symbols-outlined text-4xl text-primary">biotech</span>
+          </div>
+
+          <div class="flex-1">
+            <h3 class="text-2xl font-display font-bold mb-4">
+            Domainden Ip Adresi Bulmamızı Sağlayan API 
+            </h3>
+
+            <p class="text-slate-400 mb-4">
+            
+            </p>
+
+            <p class="text-slate-400 mb-8">
+              Machine learning and human-verified IOCs ensure zero-day detection
+              with minimal latency.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 border-t border-white/5 pt-6">
+              <ul class="space-y-2 text-sm text-slate-300">
+                <li>✔ Phishing Campaigns</li>
+                <li>✔ Malware C2</li>
+                <li>✔ Ransomware Domains</li>
+              </ul>
+
+              <div class="bg-black/30 p-4 rounded-xl">
+                <p class="text-xs text-slate-500 uppercase">API Latency</p>
+                <p class="text-2xl font-mono text-primary">12ms</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="glass-card rounded-[2rem] p-10 relative">
+        <span class="absolute top-6 right-6 text-[10px] px-3 py-1 border border-white/10 rounded-full text-slate-400">
+          Technical Specs: SB-x64-K
+        </span>
+
+        <div class="flex gap-10">
+          <div class="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center turquoise-glow-icon">
+            <span class="material-symbols-outlined text-4xl text-primary">terminal</span>
+          </div>
+
+          <div class="flex-1">
+            <h3 class="text-2xl font-display font-bold mb-4">
+              Hypervisor Behavioral Sandbox
+            </h3>
+
+            <p class="text-slate-400 mb-4">
+              Fully isolated sandbox executing suspicious payloads with real user
+              behavior emulation.
+            </p>
+
+            <p class="text-slate-400 mb-8">
+              Captures memory, syscalls and traffic for forensic-level visibility.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 border-t border-white/5 pt-6">
+              <ul class="space-y-2 text-sm text-slate-300">
+                <li>✔ In-memory payloads</li>
+                <li>✔ Drive-by downloads</li>
+                <li>✔ Browser exploits</li>
+              </ul>
+
+              <div class="bg-black/30 p-4 rounded-xl">
+                <p class="text-xs text-slate-500 uppercase">Detonation Speed</p>
+                <p class="text-2xl font-mono text-primary">&lt; 15s</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3 -->
+      <div class="glass-card rounded-[2rem] p-10 relative">
+        <span class="absolute top-6 right-6 text-[10px] px-3 py-1 border border-white/10 rounded-full text-slate-400">
+          Technical Specs: DR-v9.0
+        </span>
+
+        <div class="flex gap-10">
+          <div class="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center turquoise-glow-icon">
+            <span class="material-symbols-outlined text-4xl text-primary">public</span>
+          </div>
+
+          <div class="flex-1">
+            <h3 class="text-2xl font-display font-bold mb-4">
+              Domain Reputation Scoring
+            </h3>
+
+            <p class="text-slate-400 mb-4">
+              Deep inspection of WHOIS, SSL, DNS and lexical patterns.
+            </p>
+
+            <p class="text-slate-400 mb-8">
+              TrustScore algorithm processes 50+ signals for precise decisions.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 border-t border-white/5 pt-6">
+              <ul class="space-y-2 text-sm text-slate-300">
+                <li>✔ Typosquatting</li>
+                <li>✔ DGA domains</li>
+                <li>✔ Newly registered</li>
+              </ul>
+
+              <div class="bg-black/30 p-4 rounded-xl">
+                <p class="text-xs text-slate-500 uppercase">Dataset Size</p>
+                <p class="text-2xl font-mono text-primary">4.2B+</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="mt-20 py-12 border-t border-primary/10 bg-background-dark/95 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 text-center text-slate-500 text-xs">
+      © 2024 CYBER-OPS CORE SYSTEMS — ALL RIGHTS RESERVED
+    </div>
+  </footer>
+
+</body>
+</html>
+
